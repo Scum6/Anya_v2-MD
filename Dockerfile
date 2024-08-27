@@ -1,8 +1,13 @@
-FROM quay.io/teamolduser/docker
+FROM node:lts-buster
 
-COPY . /root/Anyav2
-WORKDIR /root/Anyav2
+RUN apt-get update && \
+    apt-get install -y ffmpeg webp && \
+    apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN yarn install --network-concurrency 1
-EXPOSE 8000
-CMD ["yarn", "start"]
+COPY package.json ./
+RUN npm install --only=prod --legacy-peer-deps
+
+COPY . .
+
+CMD ["npm", "start"]
